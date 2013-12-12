@@ -4,4 +4,4 @@ test/xsd
 .DS_Store
 .idea
 .rvmrc
-
+*.iml

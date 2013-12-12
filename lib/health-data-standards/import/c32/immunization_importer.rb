@@ -12,6 +12,7 @@ module HealthDataStandards
 
         def create_entry(entry_element, nrh = CDA::NarrativeReferenceHandler.new)
           immunization = super
+          immunization.status_code = {'HL7 ActStatus' => ['administered']}
           extract_negation(entry_element, immunization)
           extract_performer(entry_element, immunization)
           immunization
