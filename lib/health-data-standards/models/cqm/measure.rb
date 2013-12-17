@@ -85,6 +85,10 @@ module HealthDataStandards
       def is_stratified?
         !population_ids[STRATIFICATION].nil?
       end
+      
+      def stratification_id
+        population_ids[STRATIFICATION]
+      end
 
       def self.installed
         Measure.order_by([["id", :asc],["sub_id", :asc]]).to_a

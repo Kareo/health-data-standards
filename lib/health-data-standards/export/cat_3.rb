@@ -1,6 +1,9 @@
 module HealthDataStandards
   module Export
     class Cat3
+      
+      NOT_STRATIFIED = "<not stratified>"
+      
       def initialize
         template_helper = HealthDataStandards::Export::TemplateHelper.new('cat3', 'cat3')
         @rendering_context = HealthDataStandards::Export::RenderingContext.new
@@ -12,13 +15,20 @@ module HealthDataStandards
       def export(measures, header, effective_date, start_date, end_date, filter=nil,test_id=nil)
         qc = HealthDataStandards::CQM::QueryCache
 
+        collected_measures = measures.group_by(&:hqmf_id)
+        
         results = Hash[
             collected_measures.map do |hqmf_id, measures|
-              # Any stratified measures means everything should be aggregated
-              if measures.any?(&:is_stratified?)
-                aggregates = [qc.aggregate_measure(hqmf_id, effective_date, filter, test_id)]
-              else
-                aggregates = measures.map {|m| qc.aggregate_measure(hqmf_id, effective_date, filter, test_id, m.sub_id)}
+              aggregate_groups = measures.group_by{|m| m.stratification_id || NOT_STRATIFIED}
+              
+              # All non-stratified measures are individually processed
+              aggregates = aggregate_groups.delete(NOT_STRATIFIED).map do |m|
+                qc.aggregate_measure(hqmf_id, effective_date, filter, test_id, sub_id: m.sub_id)
+              end
+              
+              # Everything else is grouped by stratification id
+              aggregates << aggregate_groups.map do |strat_id, measures|
+                qc.aggregate_measure(hqmf_id, effective_date, filter, test_id, strat_id: strat_id)
               end
 
               [hqmf_id, aggregates]

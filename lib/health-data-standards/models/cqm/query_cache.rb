@@ -21,7 +21,7 @@ module HealthDataStandards
       field :OBSERV, type: Float
       field :supplemental_data, type: Hash
 
-      def self.aggregate_measure(measure_id, effective_date, filter=nil, test_id=nil, sub_id=nil)
+      def self.aggregate_measure(measure_id, effective_date, filter=nil, test_id=nil, opts={})
         query = {
             effective_date: effective_date,
             measure_id: measure_id,
@@ -29,7 +29,10 @@ module HealthDataStandards
             filter: filter
         }
         
-        query[:sub_id] = sub_id unless sub_id.blank?
+        # Add on any extra, optional aggregation controls
+        opts ||= {}
+        query[:sub_id] = opts[:sub_id] unless opts[:sub_id].blank?
+        query['population_ids.stratification'] = opts[:strat_id] unless opts[:strat_id].blank?
         
         cache_entries = self.where(query)
         
