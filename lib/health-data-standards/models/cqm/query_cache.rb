@@ -26,7 +26,7 @@ module HealthDataStandards
             effective_date: effective_date,
             measure_id: measure_id,
             test_id: test_id,
-            filter: filter,
+            filter: filter
         }
         
         query[:sub_id] = sub_id unless sub_id.blank?

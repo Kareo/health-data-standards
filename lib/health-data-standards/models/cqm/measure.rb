@@ -5,6 +5,7 @@ module HealthDataStandards
       include Mongoid::Timestamps
 
       MSRPOPL = 'MSRPOPL'
+      STRATIFICATION = 'stratification'
 
       store_in collection: 'measures'
       field :id, type: String
@@ -79,6 +80,10 @@ module HealthDataStandards
       
       def is_cv?
         ! population_ids[MSRPOPL].nil?
+      end
+      
+      def is_stratified?
+        !population_ids[STRATIFICATION].nil?
       end
 
       def self.installed
