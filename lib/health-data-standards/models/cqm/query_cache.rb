@@ -21,8 +21,18 @@ module HealthDataStandards
       field :OBSERV, type: Float
       field :supplemental_data, type: Hash
 
-      def self.aggregate_measure(measure_id, effective_date, filter=nil, test_id=nil)
-        cache_entries = self.where(effective_date: effective_date, measure_id: measure_id, test_id: test_id, filter: filter)
+      def self.aggregate_measure(measure_id, effective_date, filter=nil, test_id=nil, sub_id=nil)
+        query = {
+            effective_date: effective_date,
+            measure_id: measure_id,
+            test_id: test_id,
+            filter: filter,
+        }
+        
+        query[:sub_id] = sub_id unless sub_id.blank?
+        
+        cache_entries = self.where(query)
+        
         aggregate_count = AggregateCount.new
         aggregate_count.measure_id = measure_id
         cache_entries.each do |cache_entry|
