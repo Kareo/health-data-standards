@@ -121,7 +121,7 @@ Measure Section
                 </externalDocument>
               </reference>
 
-              <% result = results[measure['hqmf_id']]
+              <% results[measure['hqmf_id']].each do |result|
                  unless result.is_cv? || result.multiple_population_types?
               -%>
               <component>
@@ -134,6 +134,7 @@ Measure Section
               <%== render :partial => 'measure_data', :locals => {:aggregate_count => result, :population_type => pop.type, :population_id => pop.id} %>
               </component>
               <%   end
+                 end
                  end -%>
             </organizer>
           </entry>

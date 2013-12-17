@@ -21,7 +21,7 @@ module HealthDataStandards
       field :OBSERV, type: Float
       field :supplemental_data, type: Hash
 
-      def self.aggregate_measure(measure_id, effective_date, filter=nil, test_id=nil)
+      def self.aggregate_measure(measure_id, effective_date, filter=nil, test_id=nil, sub_id=nil)
         query = {
             effective_date: effective_date,
             measure_id: measure_id,
