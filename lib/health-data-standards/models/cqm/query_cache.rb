@@ -31,8 +31,7 @@ module HealthDataStandards
         
         # Add on any extra, optional aggregation controls
         opts ||= {}
-        query[:sub_id] = opts[:sub_id] unless opts[:sub_id].blank?
-        query['population_ids.stratification'] = opts[:strat_id] unless opts[:strat_id].blank?
+        query['sub_id'] = {:$in => opts[:measures].map(&:sub_id).uniq} unless opts[:measures].blank?
         
         cache_entries = self.where(query)
         

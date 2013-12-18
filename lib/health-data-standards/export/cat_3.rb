@@ -13,26 +13,30 @@ module HealthDataStandards
       end
 
       def export(measures, header, effective_date, start_date, end_date, filter=nil,test_id=nil)
-        qc = HealthDataStandards::CQM::QueryCache
-
         collected_measures = measures.group_by(&:hqmf_id)
         
         results = Hash[
-            collected_measures.map do |hqmf_id, measures|
-              aggregate_groups = measures.group_by{|m| m.stratification_id || NOT_STRATIFIED}
-              
-              # All non-stratified measures are individually processed
-              aggregates = aggregate_groups.delete(NOT_STRATIFIED).map do |m|
-                qc.aggregate_measure(hqmf_id, effective_date, filter, test_id, sub_id: m.sub_id)
+          collected_measures.map do |hqmf_id, measures|
+            # First, group all stratifications w/ their top-level population sub-measures
+            aggregate_groups = measures.group_by do |measure| 
+              if measure.is_stratified?
+                # Strip the trailing ", RS#: ##-##" style suffix of weight assessment sub-measures.
+                # Chlamydia won't work with this, but will get patched later.
+                measure.subtitle.gsub(/,[^,]+$/, '')
+              else
+                measure.subtitle
               end
-              
-              # Everything else is grouped by stratification id
-              aggregates << aggregate_groups.map do |strat_id, measures|
-                qc.aggregate_measure(hqmf_id, effective_date, filter, test_id, strat_id: strat_id)
-              end
-
-              [hqmf_id, aggregates]
             end
+
+            # Generate aggregates in what is hopefully groups of 1 top level sub-measure and 0+ stratifications
+            # associated with that.
+            aggregates = aggregate_groups.map do |group_critieria, measures|
+              HealthDataStandards::CQM::QueryCache.aggregate_measure(hqmf_id, effective_date, filter, test_id, 
+                                                                     measures: measures)
+            end
+
+            [hqmf_id, aggregates]
+          end
         ]
         
         @rendering_context.render(:template => 'show', 
