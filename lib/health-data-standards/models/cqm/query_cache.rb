@@ -21,15 +21,17 @@ module HealthDataStandards
       field :OBSERV, type: Float
       field :supplemental_data, type: Hash
 
-      def self.aggregate_measure(measure_id, effective_date, filter=nil, test_id=nil, sub_id=nil)
+      def self.aggregate_measure(measure_id, effective_date, filter=nil, test_id=nil, opts={})
         query = {
             effective_date: effective_date,
             measure_id: measure_id,
             test_id: test_id,
-            filter: filter,
+            filter: filter
         }
         
-        query[:sub_id] = sub_id unless sub_id.blank?
+        # Add on any extra, optional aggregation controls
+        opts ||= {}
+        query['sub_id'] = {:$in => opts[:measures].map(&:sub_id).uniq} unless opts[:measures].blank?
         
         cache_entries = self.where(query)
         
