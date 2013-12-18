@@ -17,14 +17,21 @@ module HealthDataStandards
         
         results = Hash[
           collected_measures.map do |hqmf_id, measures|
-            # First, group all stratifications w/ their top-level population sub-measures
-            aggregate_groups = measures.group_by do |measure| 
-              if measure.is_stratified?
-                # Strip the trailing ", RS#: ##-##" style suffix of weight assessment sub-measures.
-                # Chlamydia won't work with this, but will get patched later.
-                measure.subtitle.gsub(/,[^,]+$/, '')
-              else
-                measure.subtitle
+            # First, group all stratifications w/ their top-level population sub-measures.
+            if measures.count{|m| !m.is_stratified?} == 1
+              # This is chlamydia style case where there is no real tie-in between strats and top-level
+              aggregate_groups = measures
+              
+            else
+              # This is the weight assessment style case where a group critieria exists.
+              # Anything with only non-stratified sub-measures will pass through here without a problem. 
+              aggregate_groups = measures.group_by do |measure|
+                if measure.is_stratified?
+                  # Strip trailing ", RS#: ##-##" style suffix of weight assessment stratified sub-measures.
+                  measure.subtitle.gsub(/,[^,]+$/, '')
+                else
+                  measure.subtitle
+                end
               end
             end
 
