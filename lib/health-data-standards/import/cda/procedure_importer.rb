@@ -8,7 +8,10 @@ module HealthDataStandards
         def initialize(entry_finder=EntryFinder.new("//cda:section[cda:templateId/@root!='2.16.840.1.113883.3.88.11.83.124']//cda:procedure"))
           super(entry_finder)
           @entry_class = Procedure
-          @value_xpath = nil
+          
+          # The "Preventive Care and Screening: Screening for Clinical Depression and Follow-Up Plan" measure was failing
+          # because this was not getting on procedure entries, letting it back in!
+          #@value_xpath = nil
         end
         
         def create_entry(entry_element, nrh = NarrativeReferenceHandler.new)
