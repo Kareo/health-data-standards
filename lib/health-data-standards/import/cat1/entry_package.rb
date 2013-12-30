@@ -19,11 +19,11 @@ module HealthDataStandards
           if oid_mapping['negation']
             negative_oid= hqmf_oid
             positive_oid = HealthDataStandards::Util::HQMFTemplateHelper.template_id_by_definition_and_status(
-                oid_mapping['definition'], oid_mapping['status'], true)
+                oid_mapping['definition'], oid_mapping['status'], false)
           else
             positive_oid = hqmf_oid
             negative_oid = HealthDataStandards::Util::HQMFTemplateHelper.template_id_by_definition_and_status(
-                oid_mapping['definition'], oid_mapping['status'], false)
+                oid_mapping['definition'], oid_mapping['status'], true)
           end
 
           entries.each do |entry|
