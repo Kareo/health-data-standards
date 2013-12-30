@@ -15,14 +15,14 @@ module HealthDataStandards
           entries = self.importer_type.create_entries(doc, nrh)
 
           # Figure out correct negative/positive oids for this importer
-          oid_mapping = HQMFTemplateHelper.template_id_map[hqmf_oid]
+          oid_mapping = HealthDataStandards::Util::HQMFTemplateHelper.template_id_map[hqmf_oid]
           if oid_mapping['negation']
             negative_oid= hqmf_oid
-            positive_oid = HQMFTemplateHelper.template_id_by_definition_and_status(
+            positive_oid = HealthDataStandards::Util::HQMFTemplateHelper.template_id_by_definition_and_status(
                 oid_mapping['definition'], oid_mapping['status'], true)
           else
             positive_oid = hqmf_oid
-            negative_oid = HQMFTemplateHelper.template_id_by_definition_and_status(
+            negative_oid = HealthDataStandards::Util::HQMFTemplateHelper.template_id_by_definition_and_status(
                 oid_mapping['definition'], oid_mapping['status'], false)
           end
 
