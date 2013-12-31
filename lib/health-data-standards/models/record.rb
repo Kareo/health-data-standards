@@ -83,13 +83,29 @@ class Record
   # lose information because it does not compare entries based on clinical
   # content
   def dedup_section!(section)
-    unique_entries = self.send(section).uniq do |entry|
+    # Collect entries w/ the same id
+    collected_entries = self.send(section).group_by do |entry|
       if entry.respond_to?(:cda_identifier) && entry.cda_identifier.present?
         entry.cda_identifier
       else
         entry.id
       end
     end
+
+    # Combine entries w/ the same id into one imported entry
+    unique_entries = collected_entries.map do |id, entries|
+      saved_entry = entries.first
+
+      # Keep all unique codes in the saved entry
+      if entries.any? {|entry| !entry.codes.blank?}
+        (entries[1..-1] || []).map(&:codes).compact.each do |codes|
+          (entries.first.codes ||= {}).merge!(codes) {|key, v1, v2| v1 | v2}
+        end
+      end
+
+      saved_entry
+    end
+
     self.send("#{section}=", unique_entries)
   end
 
