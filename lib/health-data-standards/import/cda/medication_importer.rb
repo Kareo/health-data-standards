@@ -28,6 +28,8 @@ module HealthDataStandards
           if medication.description.present?
             medication.free_text = medication.description
           end
+
+          medication.status_code = {'HL7 ActStatus' => ['dispensed']}
           
           extract_administration_timing(entry_element, medication)
           
