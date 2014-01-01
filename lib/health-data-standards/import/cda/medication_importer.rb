@@ -19,6 +19,7 @@ module HealthDataStandards
           @indication_xpath = "./cda:entryRelationship[@typeCode='RSON']/cda:observation[cda:templateId/@root='2.16.840.1.113883.10.20.1.28']/cda:code"
           @vehicle_xpath = "cda:participant/cda:participantRole[cda:code/@code='412307009' and cda:code/@codeSystem='2.16.840.1.113883.6.96']/cda:playingEntity/cda:code"
           @fill_number_xpath = "./cda:entryRelationship[@typeCode='COMP']/cda:sequenceNumber/@value"
+          @status_xpath = "./cda:statusCode"
           @entry_class = Medication
         end
 
@@ -28,8 +29,6 @@ module HealthDataStandards
           if medication.description.present?
             medication.free_text = medication.description
           end
-
-          medication.status_code = {'HL7 ActStatus' => ['dispensed']}
           
           extract_administration_timing(entry_element, medication)
           
