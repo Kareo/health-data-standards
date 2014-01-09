@@ -8,6 +8,7 @@ module HealthDataStandards
           @death_xpath = "./cda:entryRelationship[@typeCode='CAUS']/cda:observation"
           @cod_xpath = "#{@death_xpath}/cda:code[@code='419620001']"
           @time_of_death_xpath = "#{@death_xpath}/cda:effectiveTime/@value"
+          @status_xpath = "./cda:statusCode"
         end
         
         def create_entry(entry_element, nrh = CDA::NarrativeReferenceHandler.new)
