@@ -21,7 +21,17 @@ module HealthDataStandards
           extract_site(entry_element, procedure)
           extract_negation(entry_element, procedure)
           procedure.reason = extract_code(entry_element, @reason_xpath, 'SNOMED-CT')
-          procedure.status_code = {'HL7 ActStatus' => ['ordered', 'performed']}
+
+          status_element = entry_element.at_xpath("./cda:statusCode")
+          if status_element
+            status = status_element['code']
+            if status == 'ordered'
+              procedure.status_code = {'HL7 ActStatus' => ['ordered']}
+            else
+              procedure.status_code = {'HL7 ActStatus' => ['performed']}
+            end
+          end
+
           procedure
         end
 
