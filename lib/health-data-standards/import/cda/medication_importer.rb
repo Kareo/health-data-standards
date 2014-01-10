@@ -48,6 +48,16 @@ module HealthDataStandards
           
           extract_fulfillment_history(entry_element, medication)
           extract_negation(entry_element, medication)
+
+          unless medication.start_time.nil?
+            if medication.end_time.nil?
+              med_duration = Time.now.to_i - medication.start_time
+            else
+              med_duration = medication.end_time - medication.start_time
+            end
+            # convert duration to days
+            medication.cumulativeMedicationDuration = {:scalar => (med_duration/86400).floor, :unit => 'd'}
+          end
           
           medication
         end
