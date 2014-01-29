@@ -129,7 +129,7 @@ module HealthDataStandards
               entry.values << crv
             else
               value = value_element.text
-              unit = value_element['unit']                  `
+              unit = value_element['unit']
               entry.set_value(value.strip, unit)
             end
             
