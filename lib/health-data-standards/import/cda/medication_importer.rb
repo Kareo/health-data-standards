@@ -53,7 +53,7 @@ module HealthDataStandards
             if medication.end_time.nil?
               med_duration = Time.now.to_i - medication.start_time
             else
-              if medication.status == :ordered and medication.end_time == medication.start_time
+              if medication.status == 'ordered' and medication.end_time == medication.start_time
                 # hack for high-risk medications CQM, so that we get a cumulative medication duration if the medication is not discontinued yet
                 med_duration = Time.now.to_i - medication.start_time
               else
