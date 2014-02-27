@@ -29,6 +29,9 @@ module ThingWithCodes
              return {'code' => matching_codes.first, 'code_set' => matching_code_set}
            end
         end
+
+        # None of entry's codes matched the value set, so return no match
+        return nil
       else
       code_set = matching_code_sets.first
       {'code' => codes_value[code_set].first, 'code_set' => code_set}
