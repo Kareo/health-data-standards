@@ -55,13 +55,13 @@ module HealthDataStandards
         #    ./cda:consumable/cda:manufacturedProduct/cda:manufacturedMaterial/cda:code
         def initialize(check_usable = true)
           @section_importers = {}
-          @section_importers[:encounters] = CDA::EncounterImporter.new
-          @section_importers[:procedures] = CDA::ProcedureImporter.new
-          @section_importers[:results] = CDA::ResultImporter.new
+          @section_importers[:encounters] = EncounterImporter.new
+          @section_importers[:procedures] = ProcedureImporter.new
+          @section_importers[:results] = ResultImporter.new
           @section_importers[:vital_signs] = CDA::VitalSignImporter.new
-          @section_importers[:medications] = CDA::MedicationImporter.new
+          @section_importers[:medications] = MedicationImporter.new
           @section_importers[:conditions] = ConditionImporter.new
-          @section_importers[:social_history] = CDA::SectionImporter.new(CDA::EntryFinder.new("//cda:observation[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.19']"))
+          @section_importers[:social_history] = SocialHistoryImporter.new
           @section_importers[:care_goals] = CareGoalImporter.new
           @section_importers[:medical_equipment] = CDA::MedicalEquipmentImporter.new
           @section_importers[:allergies] = CDA::AllergyImporter.new
