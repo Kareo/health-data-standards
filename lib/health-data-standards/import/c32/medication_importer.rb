@@ -18,14 +18,11 @@ module HealthDataStandards
         def create_entry
           entry = super
 
-          case entry.status.to_s.downcase
-            when 'active' then entry.oid = '2.16.840.1.113883.3.560.1.13'
-
-            # TODO Assure this is getting set in mirth
-            when 'administered' then entry.oid = '2.16.840.1.113883.3.560.1.14'
-
-            when 'ordered' then entry.oid = '2.16.840.1.113883.3.560.1.17'
-            when 'dispensed' then entry.oid = '2.16.840.1.113883.3.560.1.8'
+          case
+            when false then entry.oid = '2.16.840.1.113883.3.560.1.13'
+            when false then entry.oid = '2.16.840.1.113883.3.560.1.14'
+            when false then entry.oid = '2.16.840.1.113883.3.560.1.17'
+            when false then entry.oid = '2.16.840.1.113883.3.560.1.8'
           end
 
           entry
