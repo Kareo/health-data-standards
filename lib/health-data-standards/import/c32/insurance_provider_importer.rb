@@ -2,11 +2,7 @@ module HealthDataStandards
   module Import
     module C32
       class InsuranceProviderImporter < CDA::SectionImporter
-
-        #@section_importers[:insurance_providers] = [
-        #  * generate_importer(InsuranceProviderImporter, nil, '2.16.840.1.113883.3.560.1.405') # ******
-        #]
-
+        
         def initialize(entry_finder=CDA::EntryFinder.new("//cda:act[cda:templateId/@root='2.16.840.1.113883.10.20.1.26']"))
           super(entry_finder)
           @check_for_usable = false # needs to be this way becase InsuranceProvider does not respond
@@ -28,9 +24,6 @@ module HealthDataStandards
           ip.member_id = patient_element.at_xpath("./cda:id")
           ip.relationship = extract_code(patient_element, "./cda:code")
           ip.financial_responsibility_type = extract_code(payer_element, "./cda:performer/cda:assignedEntity/cda:code")
-
-          ip.oid = '2.16.840.1.113883.3.560.1.405'
-
           ip
         end
         

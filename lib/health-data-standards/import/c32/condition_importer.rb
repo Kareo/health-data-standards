@@ -2,17 +2,7 @@ module HealthDataStandards
   module Import
     module C32
       class ConditionImporter < CDA::ConditionImporter
-
-        #@section_importers[:conditions] = [
-        #    generate_importer(GestationalAgeImporter, nil, '2.16.840.1.113883.3.560.1.1001'),
-        #    generate_importer(EcogStatusImporter, nil, '2.16.840.1.113883.3.560.1.1001'),
-        #    generate_importer(SymptomActiveImporter, nil, '2.16.840.1.113883.3.560.1.69', 'active'),
-        #  * generate_importer(DiagnosisActiveImporter, nil, '2.16.840.1.113883.3.560.1.2', 'active'), # ******
-        #    generate_importer(CDA::ConditionImporter, "//cda:observation[cda:templateId/@root = '2.16.840.1.113883.10.20.24.3.54']", '2.16.840.1.113883.3.560.1.404'), # patient characteristic age
-        #    generate_importer(CDA::ConditionImporter, "//cda:observation[cda:templateId/@root = '2.16.840.1.113883.10.20.24.3.14']", '2.16.840.1.113883.3.560.1.24', 'resolved'), #diagnosis resolved
-        #    generate_importer(DiagnosisInactiveImporter, nil, '2.16.840.1.113883.3.560.1.23', 'inactive') #diagnosis inactive
-        #]
-
+        
         def initialize
           super
           @death_xpath = "./cda:entryRelationship[@typeCode='CAUS']/cda:observation"
@@ -25,9 +15,6 @@ module HealthDataStandards
           condition = super
           extract_cause_of_death(entry_element, condition)
           extract_type(entry_element, condition)
-
-          condition.oid = '2.16.840.1.113883.3.560.1.2'
-
           condition
         end
 
