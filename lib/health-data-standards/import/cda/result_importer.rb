@@ -9,6 +9,7 @@ module HealthDataStandards
         
         def create_entry(entry_element, nrh = NarrativeReferenceHandler.new)
           result = super
+          result.status_code = {'HL7 ActStatus' => ['ordered']}
           extract_value(entry_element, result)
           extract_interpretation(entry_element, result)
           extract_reference_range(entry_element, result)
