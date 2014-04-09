@@ -18,6 +18,7 @@ class Record
   field :marital_status, type: Hash
   field :medical_record_number, type: String
   field :expired, type: Boolean
+  field :source, type: String
   field :clinicalTrialParticipant, type: Boolean   # Currently not implemented in the C32 importer
                                                    # because it cannot be easily represented in a
                                                    # HITSP C32
@@ -36,6 +37,8 @@ class Record
 
   alias :social_history :socialhistories
   alias :social_history= :socialhistories=
+  alias :social_histories :socialhistories
+  alias :social_histories= :socialhistories=
 
   embeds_many :vital_signs
   embeds_many :support
@@ -62,6 +65,75 @@ class Record
     Time.at(birthdate) < Time.now.years_ago(18)
   end
 
+  # Method returns all of the entries relevant to calculating the given data criteria in the same
+  # way that hqmf2js embeds w/in each of its propositional functions
+  def entries_for_data_criteria(data_criteria)
+    return [] unless data_criteria.patient_api_function
+    
+    entries = send(data_criteria.patient_api_function.to_s.underscore)
+    if data_criteria.status
+      entries = entries.select do |entry|
+        data_criteria.status == entry.status
+      end
+    end
+
+    # Do *not* take negation or codes into account here since the common path in ScoopedViewHelper
+    # will do this.
+
+    entries
+  end
+
+  # hQuery.Patient::procedureResults = -> this.results().concat(this.vitalSigns()).concat(this.procedures())
+  def procedure_results
+    results + vital_signs + procedures
+  end
+
+  # hQuery.Patient::allProcedures = -> this.procedures().concat(this.immunizations()).concat(this.medications())
+  def all_procedures
+    procedures + immunizations + medications
+  end
+
+  # hQuery.Patient::laboratoryTests = -> this.results().concat(this.vitalSigns())
+  def laboratory_tests
+    results + vital_signs
+  end
+
+  # hQuery.Patient::allMedications = -> this.medications().concat(this.immunizations())
+  def all_medications
+    medications + immunizations
+  end
+
+  # hQuery.Patient::allProblems = -> this.conditions().concat(this.socialHistories()).concat(this.procedures())
+  def all_problems
+    conditions + social_histories + procedures
+  end
+
+  # hQuery.Patient::allDevices = -> this.conditions().concat(this.procedures()).concat(this.careGoals()).concat(this.medicalEquipment())
+  def all_devices
+    conditions + procedures + care_goals + medical_equipment
+  end
+
+  # hQuery.Patient::activeDiagnoses = -> this.conditions().concat(this.socialHistories()).withStatuses(['active'])
+  def active_diagnoses
+    (conditions + social_history).select do |entry|
+      entry.status == 'active'
+    end
+  end
+
+  # hQuery.Patient::inactiveDiagnoses = -> this.conditions().concat(this.socialHistories()).withStatuses(['inactive'])
+  def inactive_diagnoses
+    (conditions + social_history).select do |entry|
+      entry.status == 'inactive'
+    end
+  end
+
+  # hQuery.Patient::resolvedDiagnoses = -> this.conditions().concat(this.socialHistories()).withStatuses(['resolved'])
+  def resolved_diagnoses
+    (conditions + social_history).select do |entry|
+      entry.status == 'resolved'
+    end
+  end
+
   def entries_for_oid(oid)
     matching_entries_by_section = Sections.map do |section|
       section_entries = self.send(section)
@@ -72,6 +144,10 @@ class Record
       end
     end
     matching_entries_by_section.flatten
+  end
+
+  def from_qrda?
+    source == 'cat1'
   end
 
   memoize :entries_for_oid

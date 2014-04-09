@@ -87,23 +87,28 @@ module HealthDataStandards
           when '2.16.840.1.113883.3.560.1.405'
             filtered_entries = handle_payer_information(patient)
           else
-            entries.concat patient.entries_for_oid(data_criteria_oid)
+
+            if patient.from_qrda?
+              entries.concat patient.entries_for_oid(data_criteria_oid)
 
               case data_criteria_oid
-              when '2.16.840.1.113883.3.560.1.5' 
+              when '2.16.840.1.113883.3.560.1.5'
                 #special case handling for Lab Test: Performed being implicitly available through a Lab Test: Result
                 entries.concat patient.entries_for_oid('2.16.840.1.113883.3.560.1.12')
               when '2.16.840.1.113883.3.560.1.12'
-                entries.concat patient.entries_for_oid('2.16.840.1.113883.3.560.1.5')  
-              when '2.16.840.1.113883.3.560.1.6' 
+                entries.concat patient.entries_for_oid('2.16.840.1.113883.3.560.1.5')
+              when '2.16.840.1.113883.3.560.1.6'
                  entries.concat patient.entries_for_oid('2.16.840.1.113883.3.560.1.63')
-              when  '2.16.840.1.113883.3.560.1.63' 
+              when  '2.16.840.1.113883.3.560.1.63'
                  entries.concat patient.entries_for_oid('2.16.840.1.113883.3.560.1.6')
-              when '2.16.840.1.113883.3.560.1.3' 
+              when '2.16.840.1.113883.3.560.1.3'
                  entries.concat patient.entries_for_oid('2.16.840.1.113883.3.560.1.11')
-              when  '2.16.840.1.113883.3.560.1.11' 
+              when  '2.16.840.1.113883.3.560.1.11'
                  entries.concat patient.entries_for_oid('2.16.840.1.113883.3.560.1.3')
               end
+            else
+              entries = patient.entries_for_data_criteria(data_criteria)
+            end
  
             codes = (value_set_map(patient["bundle_id"])[data_criteria.code_list_id] || [])
             if codes.empty?

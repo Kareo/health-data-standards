@@ -75,6 +75,7 @@ module HealthDataStandards
           get_clinical_trial_participant(record, doc)
           get_patient_expired(record, doc)
           record.dedup_record!
+          record.source = 'cat1'
           record
         end
 
