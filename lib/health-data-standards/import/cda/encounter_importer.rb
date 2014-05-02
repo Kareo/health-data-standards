@@ -7,7 +7,6 @@ module HealthDataStandards
         def initialize(entry_finder=EntryFinder.new("//cda:section[cda:templateId/@root='2.16.840.1.113883.3.88.11.83.127']/cda:entry/cda:encounter"))
           super(entry_finder)
           @reason_xpath = "./cda:entryRelationship[@typeCode='RSON']/cda:act"
-          @status_xpath = "./cda:statusCode"
           @entry_class = Encounter
         end
         
@@ -19,6 +18,7 @@ module HealthDataStandards
           extract_negation(entry_element, encounter)
           extract_admission(entry_element, encounter)
           extract_discharge_disposition(entry_element, encounter)
+          encounter.status_code = {'HL7 ActStatus' => ['performed']}
           encounter
         end
     
