@@ -18,6 +18,7 @@ module HealthDataStandards
           extract_negation(entry_element, encounter)
           extract_admission(entry_element, encounter)
           extract_discharge_disposition(entry_element, encounter)
+          extract_status(reason_element, encounter)
           encounter
         end
     
