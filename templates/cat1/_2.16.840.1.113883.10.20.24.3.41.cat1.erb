@@ -16,7 +16,7 @@
     <%== render(:partial => 'medication_details', :locals => {:entry => entry, :route_oids=>field_oids["ROUTE"]}) %>
 
 
-    <% if entry.product_form.present? -%>
+    <% if entry.product_form.present? && entry.product_form['code'].present? -%>
     <administrationUnitCode code="<%= entry.product_form['code'] %>" codeSystem="<%= entry.product_form['codeSystem'] %>"/>
     <% end -%>
 

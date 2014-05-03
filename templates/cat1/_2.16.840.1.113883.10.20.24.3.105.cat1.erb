@@ -26,7 +26,7 @@
             <high <%= value_or_null_flavor(entry.end_time) %>/>
         </effectiveTime>
         
-        <% if entry.route.present? -%>
+        <% if entry.route.present? && entry.route['code'].present? -%>
         <!-- Attribute: route -->
         <routeCode code="<%= entry.route['code'] %>" codeSystem="<%= HealthDataStandards::Util::CodeSystemHelper.oid_for_code_system(entry.route['code_system']) %>"/>
         <% end -%>
@@ -37,7 +37,7 @@
         <% end -%>
 
 
-        <% if entry.product_form.present? -%>
+        <% if entry.product_form.present? && entry.product_form['code'].present? -%>
         <administrationUnitCode code="<%= entry.product_form['code'] %>" codeSystem="<%= entry.product_form['codeSystem'] %>"/>
         <% end -%>
 
