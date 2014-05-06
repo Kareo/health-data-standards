@@ -1,4 +1,4 @@
-<% if entry.respond_to?(:route) && entry.route.present? 
+<% if entry.respond_to?(:route) && entry.route.present? && entry.route['code'].present?
       # hard coded to NCI Thesaurus for the code system since Cat I mandates that
       vset = oid_for_code(entry.route,route_oids, entry.record["bundle_id"])
 -%>
